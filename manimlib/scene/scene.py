@@ -4,6 +4,7 @@ from collections import OrderedDict
 import platform
 import random
 import time
+import weakref
 from functools import wraps
 from contextlib import contextmanager
 from contextlib import ExitStack
@@ -117,7 +118,9 @@ class Scene(object):
 
         self.file_writer = SceneFileWriter(self, **self.file_writer_config)
         self.mobjects: list[Mobject] = [self.camera.frame]
-        self.id_to_mobject_map: dict[int, Mobject] = dict()
+        # Weak, so that a mobject taken out of the scene can still be freed: holding every
+        # mobject ever added kept all of them alive until the scene ended
+        self.id_to_mobject_map: weakref.WeakValueDictionary[int, Mobject] = weakref.WeakValueDictionary()
         self.num_plays: int = 0
         self.time: float = 0
         self.skip_time: float = 0

@@ -31,6 +31,7 @@ git diff fafa083 fixes -- manimlib      # the whole code diff
 | 8 | `AnimationGroup`, `LaggedStart` | `IndexError: tuple index out of range` when called with no animations | Let AnimationGroup be built with no arguments |
 | 9 | `VMobject.point_from_proportion` | `AssertionError` on a curve of length zero, e.g. `Arc(angle=0).pfp(0.5)` | Return the start from point_from_proportion on zero-length curves |
 | 10 | `LaggedStartMap` | `TypeError: Animation only works for Mobjects` when mapping over a list | Let LaggedStartMap map over a list of mobjects again |
+| 11 | `Scene` | Memory grows with every mobject ever added, even after it is removed, until the process is killed | Let mobjects removed from a scene be freed |
 
 ## Details
 
@@ -132,6 +133,20 @@ git diff fafa083 fixes -- manimlib      # the whole code diff
   since then a list raises `TypeError` in `Animation.__init__`.
 - **Fix:** pass the argument as `group` only when it is a `Mobject`. Otherwise `AnimationGroup`
   builds the group from the animations, as it did before.
+
+### 11. A scene kept every mobject it was ever given
+
+- **File:** `manimlib/scene/scene.py`
+- **Cause:** since "Have scene keep track of a map from mobject ids to mobjects for all it's ever
+  seen" (April 2022), `Scene.add` stores every member of every family it is given in
+  `id_to_mobject_map`, which only serves to paste mobjects by id in the interactive scene. The
+  map held them strongly and was never pruned, so nothing that had been on screen could be freed
+  before the scene ended. A scene that keeps replacing a large mobject, such as a growing
+  paragraph of `Text` redrawn on each step, grew by the whole mobject each time and was killed
+  for running out of memory.
+- **Fix:** make the map a `weakref.WeakValueDictionary`. Mobjects still referenced anywhere
+  (on screen, in a variable, in a group) stay in it as before; the others can be freed, and
+  their entries go with them.
 
 ## Behavior changes in upstream that are not bugs
 
