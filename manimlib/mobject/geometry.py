@@ -597,12 +597,14 @@ class Sector(AnnularSector):
         self,
         angle: float = TAU / 4,
         radius: float = 1.0,
+        # The name the docstring above uses, as AnnularSector does
+        outer_radius: float | None = None,
         **kwargs
     ):
         super().__init__(
             angle,
             inner_radius=0,
-            outer_radius=radius,
+            outer_radius=radius if outer_radius is None else outer_radius,
             **kwargs
         )
 

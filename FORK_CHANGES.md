@@ -40,6 +40,7 @@ git diff fafa083 fixes -- manimlib      # the whole code diff
 | 17 | `OldTex` | Parts of an `OldTex` split with an unmatched `}` (as `isolate` or several strings give) come out misaligned, missing glyphs or the wrong size | Balance OldTex braces without shifting the string being read |
 | 18 | `NewtonFractal` | With `n_steps=0` the whole fractal comes out one flat color | Color a NewtonFractal of zero steps by the nearest root |
 | 19 | `NumberPlane` | `KeyError: 'stroke_color'` when `background_line_style` leaves out the color, e.g. `dict(stroke_width=1)` | Keep the usual color for background lines styled without one |
+| 20 | `Sector` | `TypeError: got multiple values for keyword argument 'outer_radius'` with `Sector(outer_radius=...)`, as its own docstring writes it | Let Sector take outer_radius, as its docstring says |
 
 ## Details
 
@@ -245,6 +246,14 @@ git diff fafa083 fixes -- manimlib      # the whole code diff
   class's `CONFIG` used to be. The faded lines copy their color from it, so a style such as
   `dict(stroke_width=1)` raised `KeyError: 'stroke_color'`.
 - **Fix:** a style without a color keeps the usual one, `BLUE_D`.
+
+### 20. `Sector` rejected the `outer_radius` its docstring uses
+
+- **File:** `manimlib/mobject/geometry.py` (`Sector.__init__`)
+- **Cause:** since "Kill CONFIG in geometry.py" (Dec. 2022), `Sector` takes its radius as `radius`
+  and hands it to `AnnularSector` as `outer_radius`. Its docstring, and the code written before,
+  still call it `outer_radius`, which then reached `AnnularSector` twice and raised `TypeError`.
+- **Fix:** take `outer_radius` too, as the radius when given.
 
 ## Behavior changes in upstream that are not bugs
 
