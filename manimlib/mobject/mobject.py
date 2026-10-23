@@ -1836,6 +1836,11 @@ class Mobject(object):
                 for key in self.pointlike_uniform_keys
             }
 
+        if len(self.data) != len(mobject1.data):
+            # Something other than the animation, an updater say, changed how many points this
+            # holds after the animation began, as DecimalNumber.set_value does in place. The
+            # blend settles what it holds then, as it does whenever the count is unchanged
+            self.resize_points(len(mobject1.data))
         self.data.interpolate(mobject1.data, mobject2.data, alpha, data_keys_to_alt_func)
         self.uniforms.interpolate(
             mobject1.uniforms, mobject2.uniforms, alpha, uniform_keys_to_alt_func,

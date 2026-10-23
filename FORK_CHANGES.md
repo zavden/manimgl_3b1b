@@ -33,6 +33,7 @@ git diff fafa083 fixes -- manimlib      # the whole code diff
 | 10 | `LaggedStartMap` | `TypeError: Animation only works for Mobjects` when mapping over a list | Let LaggedStartMap map over a list of mobjects again |
 | 11 | `Scene` | Memory grows with every mobject ever added, even after it is removed, until the process is killed | Let mobjects removed from a scene be freed |
 | 12 | `SVGMobject`, `Text`, `Tex` | Memory grows with every distinct text drawn, with no limit | Bound the cache of mobjects built from SVGs |
+| 13 | `Mobject.interpolate` | `ValueError: operands could not be broadcast together` when an updater changes a `DecimalNumber` during an animation | Let an animation blend a mobject whose point count changed |
 
 ## Details
 
@@ -160,6 +161,20 @@ git diff fafa083 fixes -- manimlib      # the whole code diff
 - **Fix:** keep the cache in least recently used order and evict the oldest entries once it
   holds more than `SVG_CACHE_MAX_SUBMOBJECTS` (10000) submobjects in all, a few hundred typical
   `Tex` strings. Clearing the cache by hand, `SVG_HASH_TO_MOB_MAP.clear()`, works as before.
+
+### 13. An animation failed when its mobject changed size under it
+
+- **File:** `manimlib/mobject/mobject.py` (`Mobject.interpolate`)
+- **Cause:** an animation blends its mobject between copies made when it began, writing the
+  result into the mobject's own data in place, which needs the same number of points in all
+  three. Since "Performance improvement for DecimalNumber.set_value" (Feb. 2024),
+  `DecimalNumber.set_value` reshapes its digits in place with `become`, so a number whose
+  updater changes its value while it fades in or moves (updaters run during animations by
+  default) has a different point count from those copies. The blend then raised `ValueError`.
+  The same happens when two animations in one `play` share submobjects and one realigns them,
+  as in `FadeOut(title)` together with `ReplacementTransform(title["word"], ...)`.
+- **Fix:** if the point count changed, resize the mobject before blending. The blend decides
+  what it holds, as it already does when the count is unchanged.
 
 ## Behavior changes in upstream that are not bugs
 
