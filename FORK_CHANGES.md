@@ -327,3 +327,9 @@ as they are. They are listed here because they look like bugs when running older
 - **`NumberLine.unit_size` (#2402):** the attribute is gone; use `get_unit_size()`.
 - **Clip planes (#2437):** `set_clip_plane` writes the uniform `clip_plane0`, so code reading
   `mob.uniforms["clip_plane"]` fails.
+- **Points in single precision (#2482):** a mobject's points are `float32`, laid out for the gpu, where
+  they used to be `float64`. Shrinking something to a tiny size and back, such as
+  `set_height(1e-6, stretch=True)` followed by restoring it, no longer recovers its shape; a factor
+  around `1e-2` still does.
+- **`Arrow` thickness (Aug. 2024):** `thickness` is multiplied by `Arrow.tickness_multiplier` (0.015),
+  where it used to be in scene units; a `thickness=0.05` from older code draws an invisible arrow.
