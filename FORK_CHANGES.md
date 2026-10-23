@@ -196,3 +196,6 @@ as they are. They are listed here because they look like bugs when running older
   comes out negative after the y flip, which is most of them. Reversing the points also reverses
   the order of the subpaths, so `path.get_subpaths()` usually lists the subpaths of a `<path>`
   last to first. Scenes written since then rely on that order.
+- **`CoordinateSystem.x_range` and `y_range` (Nov. 2024, `64ae1364`):** a `(min, max)` range given
+  to `Axes` or `NumberPlane` is stored as `(min, max, 1)`, so `x_min, x_max = axes.x_range` fails.
+  Use `axes.x_range[:2]`.
