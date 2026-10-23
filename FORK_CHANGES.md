@@ -34,6 +34,7 @@ git diff fafa083 fixes -- manimlib      # the whole code diff
 | 11 | `Scene` | Memory grows with every mobject ever added, even after it is removed, until the process is killed | Let mobjects removed from a scene be freed |
 | 12 | `SVGMobject`, `Text`, `Tex` | Memory grows with every distinct text drawn, with no limit | Bound the cache of mobjects built from SVGs |
 | 13 | `Mobject.interpolate` | `ValueError: operands could not be broadcast together` when an updater changes a `DecimalNumber` during an animation | Let an animation blend a mobject whose point count changed |
+| 14 | `NumberPlane.get_y_unit_size` | Returns the unit of the x axis, wrong whenever the two axes differ in scale | Have get_y_unit_size measure the y axis |
 
 ## Details
 
@@ -175,6 +176,15 @@ git diff fafa083 fixes -- manimlib      # the whole code diff
   as in `FadeOut(title)` together with `ReplacementTransform(title["word"], ...)`.
 - **Fix:** if the point count changed, resize the mobject before blending. The blend decides
   what it holds, as it already does when the count is unchanged.
+
+### 14. `get_y_unit_size` measured the x axis
+
+- **File:** `manimlib/mobject/coordinate_systems.py` (`NumberPlane.get_y_unit_size`)
+- **Cause:** since "Updating coordinate system mobjects" (2019), the method returns
+  `self.get_x_axis().get_unit_size()`, a copy of `get_x_unit_size`. With the default `NumberPlane`
+  both units are equal, so it went unnoticed; with a plane whose axes differ in scale, such as
+  `NumberPlane(width=..., height=...)` over equal ranges, it gives the wrong length.
+- **Fix:** read the y axis.
 
 ## Behavior changes in upstream that are not bugs
 
