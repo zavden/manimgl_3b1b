@@ -7,7 +7,8 @@ only**: no new features and no API changes. Scenes written for upstream ManimGL 
 way here.
 
 The fixes came up while running the public [3b1b/videos](https://github.com/3b1b/videos) code
-on this version. Each one is a single commit whose message explains the cause.
+on this version. Each one is a single commit whose message explains the cause; the table
+names each commit by its title, which `git log` shows next to its hash.
 
 To see every change against upstream:
 
@@ -18,14 +19,15 @@ git diff fafa083 fixes -- manimlib      # the whole code diff
 
 ## Summary
 
-| # | Commit | Area | Symptom on upstream |
+| # | Area | Symptom on upstream | Commit |
 |---|---|---|---|
-| 1 | `4d1ee1e8` | `Tex`, `TexText` | Every LaTeX mobject fails with `ParseError: syntax error: line 1, column 0` |
-| 2 | `888b597a` | `TexturedSurface` | `NameError: im_coords` on `ShowCreation` and other partial animations |
-| 3 | `1aae293e` | `AnimatedStreamLines` | `TypeError: unexpected keyword argument 'frame_rate'` on every frame |
-| 4 | `7abd327c` | `AnimationGroup`, `LaggedStart` | `Only VMobjects can be passed into VGroup` when given a generator of non-VMobject animations |
-| 5 | `0cf2b238` | `DotCloud`, `GlowDots` | `ValueError` (max of an empty array) when an empty cloud is animated |
-| 6 | `d433356a` | `TexturedGeometry`, `ThreeDModel` | Shader compile error (`DarkTexture`) and `AttributeError` when drawn |
+| 1 | `Tex`, `TexText` | Every LaTeX mobject fails with `ParseError: syntax error: line 1, column 0` | Skip non-SVG text that Ghostscript prints before dvisvgm output |
+| 2 | `TexturedSurface` | `NameError: im_coords` on `ShowCreation` and other partial animations | Fix NameError in TexturedSurface.pointwise_become_partial |
+| 3 | `AnimatedStreamLines` | `TypeError: unexpected keyword argument 'frame_rate'` on every frame | Let AnimatedStreamLines.update accept recurse and frame_rate |
+| 4 | `AnimationGroup`, `LaggedStart` | `Only VMobjects can be passed into VGroup` when given a generator of non-VMobject animations | Decide AnimationGroup's group type from the prepared animations |
+| 5 | `DotCloud`, `GlowDots` | `ValueError` (max of an empty array) when an empty cloud is animated | Handle empty DotClouds in DotCloud.get_radius |
+| 6 | `TexturedGeometry`, `ThreeDModel` | Shader compile error (`DarkTexture`) and `AttributeError` when drawn | Give TexturedGeometry the attributes and textures it needs to render |
+| 7 | `Mobject.set_uniforms` | `AttributeError: 'dict' object has no attribute 'dtype'` when given a dict | Let Mobject.set_uniforms take a dict again |
 
 ## Details
 
@@ -84,6 +86,17 @@ git diff fafa083 fixes -- manimlib      # the whole code diff
   would have set, including `preferred_creation_axis`.
 - **Known limitation (unchanged):** `ShowCreation` of a `ThreeDModel` is still not supported,
   since a model is not a grid. Use `FadeIn` or similar instead.
+
+### 7. `Mobject.set_uniforms` no longer accepted a dict
+
+- **File:** `manimlib/mobject/mobject.py`
+- **Cause:** until #2482, `set_uniforms` took a dict of uniform names to values. Since then,
+  uniforms are a structured array and `set_uniforms` calls `StructuredArray.match`, which
+  reads `other.dtype` before anything else. A dict, for example `set_uniforms(dict(m.uniforms))`
+  or `set_uniforms({"shading": ...})`, therefore raised `AttributeError`, even though the
+  fallback that `match` uses (`StructuredArray.update`) handles mappings.
+- **Fix:** pass structured arrays to `match` as before, and plain mappings to `update`, which
+  sets the uniforms the mobject has and skips the rest.
 
 ## Behavior changes in upstream that are not bugs
 

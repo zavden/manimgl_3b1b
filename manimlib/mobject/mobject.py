@@ -168,8 +168,12 @@ class Mobject(object):
         # Typically implemented in subclass, unlpess purposefully left blank
         pass
 
-    def set_uniforms(self, uniforms: Uniforms) -> Self:
-        self.uniforms.match(uniforms)
+    def set_uniforms(self, uniforms: Uniforms | dict) -> Self:
+        if isinstance(uniforms, StructuredArray):
+            self.uniforms.match(uniforms)
+        else:
+            # A plain mapping of uniform names to values, as this method used to take
+            self.uniforms.update(uniforms)
         return self
 
     @property
