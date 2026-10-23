@@ -10,6 +10,10 @@
 [![Manim Discord](https://img.shields.io/discord/581738731934056449.svg?label=discord&logo=discord)](https://discord.com/invite/bYCyhM9Kz2)
 [![docs](https://github.com/3b1b/manim/workflows/docs/badge.svg)](https://3b1b.github.io/manim/)
 
+> [!Note]
+> **This is a fork** of [3b1b/manim](https://github.com/3b1b/manim) at commit `fafa083` (2026-09-09) with bug fixes only.
+> See [FORK_CHANGES.md](FORK_CHANGES.md) for the list of changes.
+
 Manim is an engine for precise programmatic animations, designed for creating explanatory math videos.
 
 Note, there are two versions of manim.  This repository began as a personal project by the author of [3Blue1Brown](https://www.3blue1brown.com/) for the purpose of animating those videos, with video-specific code available [here](https://github.com/3b1b/videos).  In 2020 a group of developers forked it into what is now the [community edition](https://github.com/ManimCommunity/manim/), with a goal of being more stable, better tested, quicker to respond to community contributions, and all around friendlier to get started with. See [this page](https://docs.manim.community/en/stable/faq/installation.html#different-versions) for more details.
