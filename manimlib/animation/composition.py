@@ -4,6 +4,7 @@ from manimlib.animation.animation import Animation
 from manimlib.animation.animation import prepare_animation
 from manimlib.mobject.mobject import _AnimationBuilder
 from manimlib.mobject.mobject import Group
+from manimlib.mobject.mobject import Mobject
 from manimlib.mobject.types.vectorized_mobject import VGroup
 from manimlib.mobject.types.vectorized_mobject import VMobject
 from manimlib.utils.bezier import integer_interpolate
@@ -17,7 +18,6 @@ AnimationType = Union[Animation, _AnimationBuilder]
 if TYPE_CHECKING:
     from typing import Callable, Optional
 
-    from manimlib.mobject.mobject import Mobject
     from manimlib.scene.scene import Scene
 
 
@@ -183,6 +183,8 @@ class LaggedStartMap(LaggedStart):
             *(anim_func(submob, **anim_kwargs) for submob in group),
             run_time=run_time,
             lag_ratio=lag_ratio,
-            group=group,
+            # The group may also be a plain list of mobjects, which can't serve as the
+            # animation's mobject, so then one is built from the animations instead
+            group=group if isinstance(group, Mobject) else None,
             time_span=time_span,
         )

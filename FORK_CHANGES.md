@@ -30,6 +30,7 @@ git diff fafa083 fixes -- manimlib      # the whole code diff
 | 7 | `Mobject.set_uniforms` | `AttributeError: 'dict' object has no attribute 'dtype'` when given a dict | Let Mobject.set_uniforms take a dict again |
 | 8 | `AnimationGroup`, `LaggedStart` | `IndexError: tuple index out of range` when called with no animations | Let AnimationGroup be built with no arguments |
 | 9 | `VMobject.point_from_proportion` | `AssertionError` on a curve of length zero, e.g. `Arc(angle=0).pfp(0.5)` | Return the start from point_from_proportion on zero-length curves |
+| 10 | `LaggedStartMap` | `TypeError: Animation only works for Mobjects` when mapping over a list | Let LaggedStartMap map over a list of mobjects again |
 
 ## Details
 
@@ -121,6 +122,17 @@ git diff fafa083 fixes -- manimlib      # the whole code diff
 - **Fix:** return the start of the first curve, which is what `point_from_proportion` returned
   before.
 
+### 10. `LaggedStartMap` stopped accepting a list of mobjects
+
+- **File:** `manimlib/animation/composition.py`
+- **Cause:** "Pass group parameter in LaggedStartMap -> AnimationGroup" (June 2024) made
+  `LaggedStartMap` hand its second argument to `AnimationGroup` as `group`, which becomes the
+  animation's mobject. Before, any iterable of mobjects worked, as in
+  `LaggedStartMap(FadeIn, [a, b, c])` or `LaggedStartMap(ShowCreation, mob.family_members_with_points())`;
+  since then a list raises `TypeError` in `Animation.__init__`.
+- **Fix:** pass the argument as `group` only when it is a `Mobject`. Otherwise `AnimationGroup`
+  builds the group from the animations, as it did before.
+
 ## Behavior changes in upstream that are not bugs
 
 These upstream changes break older scene code, but they are deliberate, so this fork keeps them
@@ -152,3 +164,7 @@ as they are. They are listed here because they look like bugs when running older
   and `Mobject.update` passes `frame_rate` to submobjects as a third argument. A subclass that
   overrides `update(self, dt=0, recurse=True)` raises `TypeError`; add a `frame_rate=None`
   parameter.
+- **SVG subpath order (Jan. 2023, `ab57b0ac`):** `SVGMobject` reverses each path whose orientation
+  comes out negative after the y flip, which is most of them. Reversing the points also reverses
+  the order of the subpaths, so `path.get_subpaths()` usually lists the subpaths of a `<path>`
+  last to first. Scenes written since then rely on that order.
