@@ -51,7 +51,7 @@ class AnimationGroup(Animation):
             self.group = group
         elif group_type is not None:
             self.group = group_type(*mobs)
-        elif all(isinstance(anim.mobject, VMobject) for anim in animations):
+        elif all(isinstance(anim.mobject, VMobject) for anim in self.animations):
             self.group = VGroup(*mobs)
         else:
             self.group = Group(*mobs)
