@@ -517,9 +517,19 @@ class TexturedGeometry(TexturedSurface):
         self.texture_file = texture_file
         # Not a grid, which is what the vertex shader goes by, see surface_mesh.wgsl
         self.initial_resolution = (0, 0)
+        # Surface.__init__ is skipped, so set what it would have, since the renderer
+        # and partial animations read these
+        self.preferred_creation_axis = 1
+        self.sort_to_camera = False
+        self.opaque_version = 0
+        image_path = get_full_raster_image_path(texture_file)
         Mobject.__init__(
             self,
-            textures={"LightTexture": ImageFile(get_full_raster_image_path(texture_file))}
+            # textured_surface.wgsl always samples a DarkTexture, so give it the same image
+            textures={
+                "LightTexture": ImageFile(image_path),
+                "DarkTexture": ImageFile(image_path),
+            }
         )
 
     def init_points(self):
