@@ -36,6 +36,7 @@ git diff fafa083 fixes -- manimlib      # the whole code diff
 | 13 | `Mobject.interpolate` | `ValueError: operands could not be broadcast together` when an updater changes a `DecimalNumber` during an animation | Let an animation blend a mobject whose point count changed |
 | 14 | `NumberPlane.get_y_unit_size` | Returns the unit of the x axis, wrong whenever the two axes differ in scale | Have get_y_unit_size measure the y axis |
 | 15 | `OldTex`, `OldTexText` | `Exception: Must specify either a file_name or svg_string SVGMobject` on every one | Hand OldTex the svg it is drawn from |
+| 16 | `Text`, `Tex` (`StringMobject`) | `KeyError` or an empty selection when indexed by a numpy integer, e.g. `text[np.argmin(...)]` | Index StringMobjects by numpy integers too |
 
 ## Details
 
@@ -199,6 +200,16 @@ git diff fafa083 fixes -- manimlib      # the whole code diff
 - **Fix:** write the svg from the tex string and hand it over as `svg_string`. Also,
   `OldTex.set_bstroke` now calls `set_stroke(behind=True)`, `background` having been renamed
   to `behind` in Aug. 2024.
+
+### 16. `StringMobject` could not be indexed by a numpy integer
+
+- **File:** `manimlib/mobject/svg/string_mobject.py` (`StringMobject.__getitem__`)
+- **Cause:** since "Push functionality for selecting unisolated substrings up into StringMobject"
+  (Dec. 2022), indexing a `Text` or `Tex` treats anything other than an `int` or a slice as a
+  selector, a substring or pattern to look for. A numpy integer, as `np.argmin` and indexing into
+  numpy arrays give, is not an `int`, so `text[np.int64(2)]` searched for a substring instead
+  of returning the third submobject.
+- **Fix:** take any integral number as an index.
 
 ## Behavior changes in upstream that are not bugs
 

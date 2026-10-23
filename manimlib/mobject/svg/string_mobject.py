@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 import itertools as it
+import numbers
 import re
 from scipy.optimize import linear_sum_assignment
 from scipy.spatial.distance import cdist
@@ -551,7 +552,8 @@ class StringMobject(SVGMobject, ABC):
         return self.build_parts_from_indices_lists(indices_list)
 
     def __getitem__(self, value: int | slice | Selector) -> VMobject:
-        if isinstance(value, (int, slice)):
+        # Integral rather than int, so that an index numpy gives, as from argmin, is one
+        if isinstance(value, (numbers.Integral, slice)):
             return super().__getitem__(value)
         return self.select_parts(value)
 
