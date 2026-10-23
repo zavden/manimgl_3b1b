@@ -107,7 +107,7 @@ def full_tex_to_svg(full_tex: str, compiler: str = "latex", message: str = ""):
     dvi_path = tex_path.with_suffix(dvi_ext)
 
     # Write tex file
-    tex_path.write_text(full_tex)
+    tex_path.write_text(full_tex, encoding="utf-8")
 
     # Run latex compiler
     process = subprocess.run(
@@ -151,8 +151,12 @@ def full_tex_to_svg(full_tex: str, compiler: str = "latex", message: str = ""):
         error_str = process.stderr.decode("utf-8", errors="replace").strip()
         raise LatexError(error_str or "dvisvgm failed to convert DVI to SVG")
 
-    # Return SVG string
+    # Return SVG string, skipping any text Ghostscript may print to stdout before it
     result = process.stdout.decode("utf-8")
+    svg_match = re.search(r"<\?xml|<svg", result)
+    if svg_match is None:
+        raise LatexError("dvisvgm did not produce SVG output")
+    result = result[svg_match.start():]
 
     if message:
         print(" " * len(message), end="\r")
