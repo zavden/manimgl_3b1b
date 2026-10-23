@@ -29,6 +29,7 @@ git diff fafa083 fixes -- manimlib      # the whole code diff
 | 6 | `TexturedGeometry`, `ThreeDModel` | Shader compile error (`DarkTexture`) and `AttributeError` when drawn | Give TexturedGeometry the attributes and textures it needs to render |
 | 7 | `Mobject.set_uniforms` | `AttributeError: 'dict' object has no attribute 'dtype'` when given a dict | Let Mobject.set_uniforms take a dict again |
 | 8 | `AnimationGroup`, `LaggedStart` | `IndexError: tuple index out of range` when called with no animations | Let AnimationGroup be built with no arguments |
+| 9 | `VMobject.point_from_proportion` | `AssertionError` on a curve of length zero, e.g. `Arc(angle=0).pfp(0.5)` | Return the start from point_from_proportion on zero-length curves |
 
 ## Details
 
@@ -107,6 +108,18 @@ git diff fafa083 fixes -- manimlib      # the whole code diff
   that there is an `args[0]`. Code that builds a group from a possibly empty list, like
   `LaggedStart(*anims)`, failed when the list was empty, while `AnimationGroup([])` worked.
 - **Fix:** check that there are arguments first; with none, the group is empty, as with `[]`.
+
+### 9. `point_from_proportion` failed on curves of length zero
+
+- **File:** `manimlib/mobject/types/vectorized_mobject.py` (`curve_and_prop_of_partial_point`)
+- **Cause:** when "Factor out partial results from point_from_proportion" (Sept. 2023) moved the
+  search into `curve_and_prop_of_partial_point`, the zero-length case went from returning the
+  start point to returning the curve index `len(partials)`, one past the last curve. The
+  following `get_nth_curve_function` then failed its `n < get_num_curves()` assertion. This
+  happens, for instance, with `Arc(angle=0)` or a `Line` whose ends coincide, often in updaters
+  that make an arc from an angle that passes through zero.
+- **Fix:** return the start of the first curve, which is what `point_from_proportion` returned
+  before.
 
 ## Behavior changes in upstream that are not bugs
 

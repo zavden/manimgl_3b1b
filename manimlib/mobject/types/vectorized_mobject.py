@@ -1034,7 +1034,8 @@ class VMobject(Mobject):
             partials.append(partials[-1] + arclen)
         full = partials[-1]
         if full == 0:
-            return len(partials), 1.0
+            # Every point coincides, so the start of the first curve is as good as any
+            return 0, 0.0
         # First index where the partial length is more than alpha times the full length
         index = next(
             (i for i, x in enumerate(partials) if x >= full * alpha),
