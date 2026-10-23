@@ -144,6 +144,8 @@ as they are. They are listed here because they look like bugs when running older
   `get_points()` instead.
 - **`Mobject.uniforms`:** it is a structured array now, not a dict. Reading and writing single
   entries (`mob.uniforms["shading"]`) works as before.
+- **`FillArrow` (Aug. 2024, `22ee13a8`):** it took the place of `Arrow`, and the name `FillArrow`
+  no longer exists.
 - **`set_stroke(background=...)` (Aug. 2024, `74878037`):** renamed to `set_stroke(behind=...)`,
   and `set_style(stroke_background=...)` to `set_style(stroke_behind=...)`, with no alias.
 - **`Mobject.update` and subclasses (#2481):** `Scene` now calls `mobject.update(dt, frame_rate=...)`
