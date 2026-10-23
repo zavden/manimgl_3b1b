@@ -22,7 +22,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from typing import Callable, Iterable, Sequence, TypeVar, Tuple, Optional
-    from manimlib.typing import ManimColor, Vect3, VectN, VectArray, Vect3Array, Vect4Array
+    from manimlib.typing import ManimColor, Vect3, VectN, VectArray, Vect3Array, Vect4Array, Self
 
     from manimlib.mobject.coordinate_systems import CoordinateSystem
     from manimlib.mobject.mobject import Mobject
@@ -469,9 +469,16 @@ class AnimatedStreamLines(VGroup):
 
         self.add_updater(lambda m, dt: m.update(dt))
 
-    def update(self, dt: float = 0) -> None:
+    def update(
+        self,
+        dt: float = 0,
+        recurse: bool = True,
+        frame_rate: float | None = None
+    ) -> Self:
+        # Same signature as Mobject.update, which Scene calls with frame_rate
         stream_lines = self.stream_lines
         for line in stream_lines:
             line.time += dt
             adjusted_time = max(line.time, 0) % line.anim.run_time
             line.anim.update(adjusted_time / line.anim.run_time)
+        return self
