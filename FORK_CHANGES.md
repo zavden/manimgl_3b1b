@@ -111,3 +111,13 @@ as they are. They are listed here because they look like bugs when running older
 - **`Scene.begin_animations`:** a mobject whose submobjects are all on screen already is not
   added again, so updaters attached to that parent group may never run. Add the group with
   `self.add(group)` before animating it.
+- **`VectorField` (Nov. 2024, `64ae1364` and follow-ups):** it now takes a `coordinate_system`
+  and a `density`. The old keywords (`x_density`, `width`, `height`, `depth`, `sample_points`,
+  ...) used by scenes from 2023 and earlier are gone.
+- **Scene checkpoints (Dec. 2024, `636fb3a4`):** `Scene.checkpoint` and
+  `Scene.revert_to_checkpoint` moved into the interactive embed (`checkpoint_paste`), so a
+  `construct` that calls them fails.
+- **Surface shader data:** `Surface.get_shader_data` no longer exists; read vertices from
+  `get_points()` instead.
+- **`Mobject.uniforms`:** it is a structured array now, not a dict. Reading and writing single
+  entries (`mob.uniforms["shading"]`) works as before.
