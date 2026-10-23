@@ -28,6 +28,7 @@ git diff fafa083 fixes -- manimlib      # the whole code diff
 | 5 | `DotCloud`, `GlowDots` | `ValueError` (max of an empty array) when an empty cloud is animated | Handle empty DotClouds in DotCloud.get_radius |
 | 6 | `TexturedGeometry`, `ThreeDModel` | Shader compile error (`DarkTexture`) and `AttributeError` when drawn | Give TexturedGeometry the attributes and textures it needs to render |
 | 7 | `Mobject.set_uniforms` | `AttributeError: 'dict' object has no attribute 'dtype'` when given a dict | Let Mobject.set_uniforms take a dict again |
+| 8 | `AnimationGroup`, `LaggedStart` | `IndexError: tuple index out of range` when called with no animations | Let AnimationGroup be built with no arguments |
 
 ## Details
 
@@ -97,6 +98,15 @@ git diff fafa083 fixes -- manimlib      # the whole code diff
   fallback that `match` uses (`StructuredArray.update`) handles mappings.
 - **Fix:** pass structured arrays to `match` as before, and plain mappings to `update`, which
   sets the uniforms the mobject has and skips the rest.
+
+### 8. `AnimationGroup()` with no arguments raised IndexError
+
+- **File:** `manimlib/animation/composition.py`
+- **Cause:** since "Allow LaggedStart to accept an iterable as an argument" (March 2024),
+  `__init__` looks at `args[0]` to tell an iterable from separate animations, without checking
+  that there is an `args[0]`. Code that builds a group from a possibly empty list, like
+  `LaggedStart(*anims)`, failed when the list was empty, while `AnimationGroup([])` worked.
+- **Fix:** check that there are arguments first; with none, the group is empty, as with `[]`.
 
 ## Behavior changes in upstream that are not bugs
 

@@ -35,7 +35,8 @@ class AnimationGroup(Animation):
         time_span: tuple[float, float] | None = None,
         **kwargs
     ):
-        animations = args[0] if isinstance(args[0], Iterable) else args
+        # With no arguments at all this is an empty group, like AnimationGroup([])
+        animations = args[0] if args and isinstance(args[0], Iterable) else args
         self.animations = [prepare_animation(anim) for anim in animations]
         self.build_animations_with_timings(lag_ratio)
         self.max_end_time = max((awt[2] for awt in self.anims_with_timings), default=0)
