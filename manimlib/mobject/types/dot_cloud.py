@@ -120,7 +120,9 @@ class DotCloud(PMobject):
         return self
 
     def get_radius(self) -> float:
-        return self.get_radii().max()
+        radii = self.get_radii()
+        # An empty cloud has no radii, but its bounding box still asks for one
+        return radii.max() if len(radii) > 0 else self.radius
 
     def scale_radii(self, scale_factor: float) -> Self:
         self.set_radius(scale_factor * self.get_radii())
