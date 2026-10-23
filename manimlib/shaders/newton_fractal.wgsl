@@ -107,7 +107,9 @@ struct Search {
 fn seek_root(start: vec2f, coefs: Coefs, max_steps: i32) -> Search {
     var result: Search;
     result.root = start;
-    var step_size = 0.0;
+    // As if the start were far from settled, which only matters when no step is taken at all:
+    // with n_steps of zero the pixel is colored by the root nearest where it started
+    var step_size = 1.0;
     for (var i = 0; i < max_steps; i++) {
         result.steps_taken = f32(i);
         let step = newton_step(result.root, coefs);

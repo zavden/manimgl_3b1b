@@ -38,6 +38,7 @@ git diff fafa083 fixes -- manimlib      # the whole code diff
 | 15 | `OldTex`, `OldTexText` | `Exception: Must specify either a file_name or svg_string SVGMobject` on every one | Hand OldTex the svg it is drawn from |
 | 16 | `Text`, `Tex` (`StringMobject`) | `KeyError` or an empty selection when indexed by a numpy integer, e.g. `text[np.argmin(...)]` | Index StringMobjects by numpy integers too |
 | 17 | `OldTex` | Parts of an `OldTex` split with an unmatched `}` (as `isolate` or several strings give) come out misaligned, missing glyphs or the wrong size | Balance OldTex braces without shifting the string being read |
+| 18 | `NewtonFractal` | With `n_steps=0` the whole fractal comes out one flat color | Color a NewtonFractal of zero steps by the nearest root |
 
 ## Details
 
@@ -224,6 +225,16 @@ git diff fafa083 fixes -- manimlib      # the whole code diff
   piece then came out with the wrong glyph count, and every part of the `OldTex` after it was
   matched to the wrong glyphs.
 - **Fix:** count the unmatched braces while reading, and add them once the string has been read.
+
+### 18. A `NewtonFractal` of zero steps was one flat color
+
+- **File:** `manimlib/shaders/newton_fractal.wgsl` (`seek_root`)
+- **Cause:** the shader shades each pixel by how many steps it took, corrected by the size of
+  the last step, which starts out as zero. With `n_steps=0` no step is taken, so it stays zero
+  and its logarithm, minus infinity, turns every pixel the same color. Zero steps is meant to
+  color each pixel by the root nearest where it starts, as 3b1b's newton fractal videos show
+  before increasing the step count.
+- **Fix:** start the step size at one, which makes no difference once any step is taken.
 
 ## Behavior changes in upstream that are not bugs
 
