@@ -32,6 +32,7 @@ git diff fafa083 fixes -- manimlib      # the whole code diff
 | 9 | `VMobject.point_from_proportion` | `AssertionError` on a curve of length zero, e.g. `Arc(angle=0).pfp(0.5)` | Return the start from point_from_proportion on zero-length curves |
 | 10 | `LaggedStartMap` | `TypeError: Animation only works for Mobjects` when mapping over a list | Let LaggedStartMap map over a list of mobjects again |
 | 11 | `Scene` | Memory grows with every mobject ever added, even after it is removed, until the process is killed | Let mobjects removed from a scene be freed |
+| 12 | `SVGMobject`, `Text`, `Tex` | Memory grows with every distinct text drawn, with no limit | Bound the cache of mobjects built from SVGs |
 
 ## Details
 
@@ -147,6 +148,18 @@ git diff fafa083 fixes -- manimlib      # the whole code diff
 - **Fix:** make the map a `weakref.WeakValueDictionary`. Mobjects still referenced anywhere
   (on screen, in a variable, in a group) stay in it as before; the others can be freed, and
   their entries go with them.
+
+### 12. The cache of SVG mobjects had no bound
+
+- **File:** `manimlib/mobject/svg/svg_mobject.py` (`SVG_HASH_TO_MOB_MAP`)
+- **Cause:** every `SVGMobject`, and so every `Text` and `Tex`, stores a copy of its submobjects
+  under the hash of its SVG, so that the same string is not parsed twice. Nothing was ever
+  evicted. Each cached glyph takes about 35 KB, so a scene drawing many different texts, like
+  one that adds a word to a paragraph on each step, held hundreds of megabytes per hundred
+  steps.
+- **Fix:** keep the cache in least recently used order and evict the oldest entries once it
+  holds more than `SVG_CACHE_MAX_SUBMOBJECTS` (10000) submobjects in all, a few hundred typical
+  `Tex` strings. Clearing the cache by hand, `SVG_HASH_TO_MOB_MAP.clear()`, works as before.
 
 ## Behavior changes in upstream that are not bugs
 

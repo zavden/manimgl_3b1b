@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections import OrderedDict
 from xml.etree import ElementTree as ET
 
 import numpy as np
@@ -31,7 +32,10 @@ if TYPE_CHECKING:
 # STROKE_WIDTH_CONVERSION in shaders/stroke.wgsl
 STROKE_WIDTHS_PER_UNIT: float = 100.0
 
-SVG_HASH_TO_MOB_MAP: dict[int, list[VMobject]] = {}
+# Most recently used last. It is bounded by how many mobjects it holds in all, since a scene
+# whose text keeps changing would otherwise keep every version of it until the program ends
+SVG_HASH_TO_MOB_MAP: OrderedDict[int, list[VMobject]] = OrderedDict()
+SVG_CACHE_MAX_SUBMOBJECTS: int = 10000
 PATH_TO_POINTS: dict[str, Vect3Array] = {}
 
 
@@ -147,10 +151,14 @@ class SVGMobject(VMobject):
     def init_svg_mobject(self) -> None:
         hash_val = hash_obj(self.hash_seed)
         if hash_val in SVG_HASH_TO_MOB_MAP:
+            SVG_HASH_TO_MOB_MAP.move_to_end(hash_val)
             submobs = [sm.copy() for sm in SVG_HASH_TO_MOB_MAP[hash_val]]
         else:
             submobs = self.mobjects_from_svg_string(self.svg_string)
             SVG_HASH_TO_MOB_MAP[hash_val] = [sm.copy() for sm in submobs]
+            cached = sum(map(len, SVG_HASH_TO_MOB_MAP.values()))
+            while cached > SVG_CACHE_MAX_SUBMOBJECTS and len(SVG_HASH_TO_MOB_MAP) > 1:
+                cached -= len(SVG_HASH_TO_MOB_MAP.popitem(last=False)[1])
 
         self.add(*submobs)
         self.flip(RIGHT)  # Flip y
