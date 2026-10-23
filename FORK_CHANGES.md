@@ -35,6 +35,7 @@ git diff fafa083 fixes -- manimlib      # the whole code diff
 | 12 | `SVGMobject`, `Text`, `Tex` | Memory grows with every distinct text drawn, with no limit | Bound the cache of mobjects built from SVGs |
 | 13 | `Mobject.interpolate` | `ValueError: operands could not be broadcast together` when an updater changes a `DecimalNumber` during an animation | Let an animation blend a mobject whose point count changed |
 | 14 | `NumberPlane.get_y_unit_size` | Returns the unit of the x axis, wrong whenever the two axes differ in scale | Have get_y_unit_size measure the y axis |
+| 15 | `OldTex`, `OldTexText` | `Exception: Must specify either a file_name or svg_string SVGMobject` on every one | Hand OldTex the svg it is drawn from |
 
 ## Details
 
@@ -185,6 +186,19 @@ git diff fafa083 fixes -- manimlib      # the whole code diff
   both units are equal, so it went unnoticed; with a plane whose axes differ in scale, such as
   `NumberPlane(width=..., height=...)` over equal ranges, it gives the wrong length.
 - **Fix:** read the y axis.
+
+### 15. `OldTex` could no longer be built
+
+- **File:** `manimlib/mobject/svg/old_tex_mobject.py` (`SingleStringTex.__init__`)
+- **Cause:** since "Cleaner local caching of Tex/Text data" (#2259, Dec. 2024), `SVGMobject` takes
+  the svg itself, as `svg_string`, or the name of a file holding it, and raises if given
+  neither. `Tex` and `Text` were changed to hand over the svg they write, but `SingleStringTex`,
+  which `OldTex` and `OldTexText` build on, still expected to be asked for a file, and so
+  passed neither. The same commit gave it `get_svg_string_by_content`, which nothing called.
+  `OldTex` is what the older 3b1b videos write all their LaTeX with.
+- **Fix:** write the svg from the tex string and hand it over as `svg_string`. Also,
+  `OldTex.set_bstroke` now calls `set_stroke(behind=True)`, `background` having been renamed
+  to `behind` in Aug. 2024.
 
 ## Behavior changes in upstream that are not bugs
 

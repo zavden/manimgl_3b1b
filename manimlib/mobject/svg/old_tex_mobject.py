@@ -48,6 +48,9 @@ class SingleStringTex(SVGMobject):
         self.additional_preamble = additional_preamble
 
         super().__init__(
+            # Since SVGMobject came to take the svg itself rather than a file to find it in,
+            # this has to be handed the svg, it no longer being asked for a file
+            svg_string=self.get_svg_string_by_content(self.get_tex_file_body(tex_string)),
             height=height,
             fill_color=fill_color,
             fill_opacity=fill_opacity,
@@ -75,7 +78,7 @@ class SingleStringTex(SVGMobject):
         )
 
     def get_svg_string_by_content(self, content: str) -> str:
-        return latex_to_svg(content, self.template, self.additional_preamble)
+        return latex_to_svg(content, self.template, self.additional_preamble, short_tex=self.tex_string)
 
     def get_tex_file_body(self, tex_string: str) -> str:
         new_tex = self.get_modified_expression(tex_string)
@@ -310,7 +313,7 @@ class OldTex(SingleStringTex):
         self.submobjects.sort(key=lambda m: m.get_tex())
 
     def set_bstroke(self, color: ManimColor = BLACK, width: float = 4):
-        self.set_stroke(color, width, background=True)
+        self.set_stroke(color, width, behind=True)
         return self
 
 
