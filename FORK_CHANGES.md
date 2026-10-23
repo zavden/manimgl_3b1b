@@ -224,3 +224,11 @@ as they are. They are listed here because they look like bugs when running older
 - **`CoordinateSystem.x_range` and `y_range` (Nov. 2024, `64ae1364`):** a `(min, max)` range given
   to `Axes` or `NumberPlane` is stored as `(min, max, 1)`, so `x_min, x_max = axes.x_range` fails.
   Use `axes.x_range[:2]`.
+- **`Surface.resolution` (#2482):** the attribute is gone; the resolution lives only in the
+  uniforms. Use `surface.get_resolution()` and `set_resolution()`.
+- **Speech and thought bubbles (Mar. 2024, `1d6aa479`):** `Bubble`, `SpeechBubble` and
+  `ThoughtBubble` size themselves around their content (or `filler_shape`) and no longer take
+  `width` and `height`.
+- **`NumberLine.unit_size` (#2402):** the attribute is gone; use `get_unit_size()`.
+- **Clip planes (#2437):** `set_clip_plane` writes the uniform `clip_plane0`, so code reading
+  `mob.uniforms["clip_plane"]` fails.
