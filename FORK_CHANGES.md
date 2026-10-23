@@ -41,6 +41,7 @@ git diff fafa083 fixes -- manimlib      # the whole code diff
 | 18 | `NewtonFractal` | With `n_steps=0` the whole fractal comes out one flat color | Color a NewtonFractal of zero steps by the nearest root |
 | 19 | `NumberPlane` | `KeyError: 'stroke_color'` when `background_line_style` leaves out the color, e.g. `dict(stroke_width=1)` | Keep the usual color for background lines styled without one |
 | 20 | `Sector` | `TypeError: got multiple values for keyword argument 'outer_radius'` with `Sector(outer_radius=...)`, as its own docstring writes it | Let Sector take outer_radius, as its docstring says |
+| 21 | `Animation` (`UpdateFromAlphaFunc`, `MoveAlongPath`, `ChangingDecimal`, `ShowIncreasingSubsets`...) | A short animation played alongside a longer one keeps going past its end, e.g. its rate function evaluated at 3 gives 513 | Treat alphas past one as one in Animation.interpolate |
 
 ## Details
 
@@ -254,6 +255,19 @@ git diff fafa083 fixes -- manimlib      # the whole code diff
   and hands it to `AnnularSector` as `outer_radius`. Its docstring, and the code written before,
   still call it `outer_radius`, which then reached `AnnularSector` twice and raised `TypeError`.
 - **Fix:** take `outer_radius` too, as the radius when given.
+
+### 21. Short animations kept going past their end
+
+- **File:** `manimlib/animation/animation.py` (`Animation.interpolate`)
+- **Cause:** a `play` lasts as long as its longest animation, and every animation in it is handed
+  `t / run_time`, which goes past one for the shorter ones once they are done. Until "Change
+  rate_func to be used in submobject update" (Nov. 2022), `Animation.interpolate` clipped that to
+  `[0, 1]`. The commit moved the clipping into `get_sub_alpha`, which only some animations go
+  through. Those that read the alpha themselves (`UpdateFromAlphaFunc`, `MoveAlongPath`,
+  `ChangingDecimal`, `ShowIncreasingSubsets`, `Homotopy` and others) then extrapolated: `smooth(3)`
+  is 513, so an `UpdateFromAlphaFunc` of one second next to a three second animation drove its
+  mobject far past where it should have stopped.
+- **Fix:** clip the alpha in `Animation.interpolate` again.
 
 ## Behavior changes in upstream that are not bugs
 

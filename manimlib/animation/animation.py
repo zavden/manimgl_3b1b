@@ -164,7 +164,9 @@ class Animation(object):
 
     # Methods for interpolation, the mean of an Animation
     def interpolate(self, alpha: float) -> None:
-        self.interpolate_mobject(alpha)
+        # A play lasts as long as its longest animation, and the others are handed alphas past
+        # one once they are done, which they should treat as one
+        self.interpolate_mobject(clip(alpha, 0, 1))
 
     def update(self, alpha: float) -> None:
         """
