@@ -158,6 +158,9 @@ class SingleStringTex(SVGMobject):
         Makes Tex resiliant to unmatched braces
         """
         num_unclosed_brackets = 0
+        # Counted rather than added as they are found, since adding one to the front
+        # while going through the string moves everything after it along
+        num_unopened_brackets = 0
         for i in range(len(tex)):
             if i > 0 and tex[i - 1] == "\\":
                 # So as to not count '\{' type expressions
@@ -167,11 +170,10 @@ class SingleStringTex(SVGMobject):
                 num_unclosed_brackets += 1
             elif char == "}":
                 if num_unclosed_brackets == 0:
-                    tex = "{" + tex
+                    num_unopened_brackets += 1
                 else:
                     num_unclosed_brackets -= 1
-        tex += num_unclosed_brackets * "}"
-        return tex
+        return num_unopened_brackets * "{" + tex + num_unclosed_brackets * "}"
 
     def get_tex(self) -> str:
         return self.tex_string

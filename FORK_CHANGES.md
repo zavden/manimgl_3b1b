@@ -37,6 +37,7 @@ git diff fafa083 fixes -- manimlib      # the whole code diff
 | 14 | `NumberPlane.get_y_unit_size` | Returns the unit of the x axis, wrong whenever the two axes differ in scale | Have get_y_unit_size measure the y axis |
 | 15 | `OldTex`, `OldTexText` | `Exception: Must specify either a file_name or svg_string SVGMobject` on every one | Hand OldTex the svg it is drawn from |
 | 16 | `Text`, `Tex` (`StringMobject`) | `KeyError` or an empty selection when indexed by a numpy integer, e.g. `text[np.argmin(...)]` | Index StringMobjects by numpy integers too |
+| 17 | `OldTex` | Parts of an `OldTex` split with an unmatched `}` (as `isolate` or several strings give) come out misaligned, missing glyphs or the wrong size | Balance OldTex braces without shifting the string being read |
 
 ## Details
 
@@ -210,6 +211,19 @@ git diff fafa083 fixes -- manimlib      # the whole code diff
   numpy arrays give, is not an `int`, so `text[np.int64(2)]` searched for a substring instead
   of returning the third submobject.
 - **Fix:** take any integral number as an index.
+
+### 17. `OldTex` added the wrong braces to a piece with an unmatched `}`
+
+- **File:** `manimlib/mobject/svg/old_tex_mobject.py` (`SingleStringTex.balance_braces`)
+- **Cause:** each piece of an `OldTex` is also compiled on its own, to know how many glyphs it
+  has, and a piece such as `"x}"` is first given the braces it lacks. Since "Fixes and refactoring
+  for TexMobject" (May 2018), an unmatched `}` was fixed by putting a `{` at the front of the
+  string while still going through it by index, which moved every later character one place
+  along. The same `}` was then read again at the next index, and again after that, so instead of
+  one `{` the piece got one for every character left, and `"a}=b"` became `"{{{a}=b"`. That
+  piece then came out with the wrong glyph count, and every part of the `OldTex` after it was
+  matched to the wrong glyphs.
+- **Fix:** count the unmatched braces while reading, and add them once the string has been read.
 
 ## Behavior changes in upstream that are not bugs
 
