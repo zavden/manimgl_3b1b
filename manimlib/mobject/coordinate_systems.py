@@ -659,6 +659,9 @@ class NumberPlane(Axes):
     ):
         super().__init__(x_range, y_range, **kwargs)
         self.background_line_style = dict(background_line_style)
+        # A style given without a color, say only a width, keeps the usual one rather than
+        # leaving the faded lines below without one to copy
+        self.background_line_style.setdefault("stroke_color", BLUE_D)
         self.faded_line_style = dict(faded_line_style)
         self.faded_line_ratio = faded_line_ratio
         self.make_smooth_after_applying_functions = make_smooth_after_applying_functions

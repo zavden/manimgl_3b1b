@@ -39,6 +39,7 @@ git diff fafa083 fixes -- manimlib      # the whole code diff
 | 16 | `Text`, `Tex` (`StringMobject`) | `KeyError` or an empty selection when indexed by a numpy integer, e.g. `text[np.argmin(...)]` | Index StringMobjects by numpy integers too |
 | 17 | `OldTex` | Parts of an `OldTex` split with an unmatched `}` (as `isolate` or several strings give) come out misaligned, missing glyphs or the wrong size | Balance OldTex braces without shifting the string being read |
 | 18 | `NewtonFractal` | With `n_steps=0` the whole fractal comes out one flat color | Color a NewtonFractal of zero steps by the nearest root |
+| 19 | `NumberPlane` | `KeyError: 'stroke_color'` when `background_line_style` leaves out the color, e.g. `dict(stroke_width=1)` | Keep the usual color for background lines styled without one |
 
 ## Details
 
@@ -235,6 +236,15 @@ git diff fafa083 fixes -- manimlib      # the whole code diff
   color each pixel by the root nearest where it starts, as 3b1b's newton fractal videos show
   before increasing the step count.
 - **Fix:** start the step size at one, which makes no difference once any step is taken.
+
+### 19. `NumberPlane` failed on a background line style without a color
+
+- **File:** `manimlib/mobject/coordinate_systems.py` (`NumberPlane.__init__`)
+- **Cause:** since "Make sure mutability of dict arguments won't cause problems" (Dec. 2022),
+  `background_line_style` replaces the default style rather than being merged with it, as the
+  class's `CONFIG` used to be. The faded lines copy their color from it, so a style such as
+  `dict(stroke_width=1)` raised `KeyError: 'stroke_color'`.
+- **Fix:** a style without a color keeps the usual one, `BLUE_D`.
 
 ## Behavior changes in upstream that are not bugs
 
