@@ -42,6 +42,7 @@ git diff fafa083 fixes -- manimlib      # the whole code diff
 | 19 | `NumberPlane` | `KeyError: 'stroke_color'` when `background_line_style` leaves out the color, e.g. `dict(stroke_width=1)` | Keep the usual color for background lines styled without one |
 | 20 | `Sector` | `TypeError: got multiple values for keyword argument 'outer_radius'` with `Sector(outer_radius=...)`, as its own docstring writes it | Let Sector take outer_radius, as its docstring says |
 | 21 | `Animation` (`UpdateFromAlphaFunc`, `MoveAlongPath`, `ChangingDecimal`, `ShowIncreasingSubsets`...) | A short animation played alongside a longer one keeps going past its end, e.g. its rate function evaluated at 3 gives 513 | Treat alphas past one as one in Animation.interpolate |
+| 22 | `Mobject.deepcopy` | A deep copy that is then moved or restyled is drawn where and as it was when copied, with no error | Keep a deep copied StructuredArray's views on its own array |
 
 ## Details
 
@@ -268,6 +269,17 @@ git diff fafa083 fixes -- manimlib      # the whole code diff
   is 513, so an `UpdateFromAlphaFunc` of one second next to a three second animation drove its
   mobject far past where it should have stopped.
 - **Fix:** clip the alpha in `Animation.interpolate` again.
+
+### 22. A deep copy was drawn as it was when copied
+
+- **File:** `manimlib/utils/structured_array.py` (`StructuredArray`)
+- **Cause:** since "Cleaner rending logic" (#2482, Aug. 2026), a `StructuredArray` keeps two views
+  onto its array, `floats` and `bytes`: the renderer uploads `bytes` and blending reads `floats`.
+  `StructuredArray.copy` remakes them for the new array, but `Mobject.deepcopy` goes through
+  `copy.deepcopy`, which copied each view as an array of its own. Moving or restyling the copy then
+  wrote to its array while it was drawn from the stale bytes, so it stayed where and as it was
+  when copied. 3b1b's shadows video, for one, draws its shadows from deep copies.
+- **Fix:** a `__deepcopy__` that copies the way `copy` does.
 
 ## Behavior changes in upstream that are not bugs
 

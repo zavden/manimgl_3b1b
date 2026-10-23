@@ -234,6 +234,13 @@ class StructuredArray(object):
 
         self.note_change()
 
+    def __deepcopy__(self, memo: dict) -> Self:
+        # Not left to copy.deepcopy, which would copy the floats and bytes views apart from the
+        # array they look onto, so that writes to the array no longer reach what is drawn or blended
+        result = self.copy()
+        memo[id(self)] = result
+        return result
+
     def copy(self) -> Self:
         result = copy.copy(self)
         result.set_array(self.array.copy())
