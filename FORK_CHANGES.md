@@ -144,3 +144,9 @@ as they are. They are listed here because they look like bugs when running older
   `get_points()` instead.
 - **`Mobject.uniforms`:** it is a structured array now, not a dict. Reading and writing single
   entries (`mob.uniforms["shading"]`) works as before.
+- **`set_stroke(background=...)` (Aug. 2024, `74878037`):** renamed to `set_stroke(behind=...)`,
+  and `set_style(stroke_background=...)` to `set_style(stroke_behind=...)`, with no alias.
+- **`Mobject.update` and subclasses (#2481):** `Scene` now calls `mobject.update(dt, frame_rate=...)`
+  and `Mobject.update` passes `frame_rate` to submobjects as a third argument. A subclass that
+  overrides `update(self, dt=0, recurse=True)` raises `TypeError`; add a `frame_rate=None`
+  parameter.
