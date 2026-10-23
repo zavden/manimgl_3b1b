@@ -491,13 +491,14 @@ class TexturedSurface(Surface):
             axis = self.preferred_creation_axis
         super().pointwise_become_partial(tsmobject, a, b, axis)
         with self.data.being_written() as data:
-            data["im_coords"][:] = tsmobject.data["im_coords"]
-        if a <= 0 and b >= 1:
-            return self
-        nu, nv = tsmobject.get_resolution()
-        im_coords[:] = self.get_partial_points_array(
-            im_coords, a, b, (nu, nv, 2), axis
-        )
+            im_coords = data["im_coords"]
+            im_coords[:] = tsmobject.data["im_coords"]
+            if a <= 0 and b >= 1:
+                return self
+            nu, nv = tsmobject.get_resolution()
+            im_coords[:] = self.get_partial_points_array(
+                im_coords, a, b, (nu, nv, 2), axis
+            )
         return self
 
 
