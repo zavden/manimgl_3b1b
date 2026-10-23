@@ -43,6 +43,7 @@ git diff fafa083 fixes -- manimlib      # the whole code diff
 | 20 | `Sector` | `TypeError: got multiple values for keyword argument 'outer_radius'` with `Sector(outer_radius=...)`, as its own docstring writes it | Let Sector take outer_radius, as its docstring says |
 | 21 | `Animation` (`UpdateFromAlphaFunc`, `MoveAlongPath`, `ChangingDecimal`, `ShowIncreasingSubsets`...) | A short animation played alongside a longer one keeps going past its end, e.g. its rate function evaluated at 3 gives 513 | Treat alphas past one as one in Animation.interpolate |
 | 22 | `Mobject.deepcopy` | A deep copy that is then moved or restyled is drawn where and as it was when copied, with no error | Keep a deep copied StructuredArray's views on its own array |
+| 23 | `Rotate`, `Rotating` | A group whose submobjects an updater reorders (as `sort` toward a light does) drifts off while rotating, ending millions of units away | Refresh bounding boxes after Rotating resets its points |
 
 ## Details
 
@@ -280,6 +281,18 @@ git diff fafa083 fixes -- manimlib      # the whole code diff
   wrote to its array while it was drawn from the stale bytes, so it stayed where and as it was
   when copied. 3b1b's shadows video, for one, draws its shadows from deep copies.
 - **Fix:** a `__deepcopy__` that copies the way `copy` does.
+
+### 23. A rotating group could fly off
+
+- **File:** `manimlib/animation/rotation.py` (`Rotating.interpolate_mobject`)
+- **Cause:** since "Cleaner rending logic" (#2482, Aug. 2026), each frame of a `Rotating` copies the
+  starting points straight into the mobject's data and then rotates it about its center, or about
+  an edge. Writing the data directly left the bounding boxes as they were after the previous
+  frame's rotation, so the center came from stale boxes. Usually the error cancels out, but when an
+  updater reorders the submobjects every frame, as 3b1b's shadows video does to draw the faces of a
+  solid in depth order, each frame rotated about a wrongly placed center and the group drifted
+  further off every frame, ending millions of units away.
+- **Fix:** refresh the bounding boxes after resetting the points.
 
 ## Behavior changes in upstream that are not bugs
 

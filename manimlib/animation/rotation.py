@@ -47,6 +47,9 @@ class Rotating(Animation):
         for sm1, sm2 in pairs:
             for key in sm1.pointlike_data_keys:
                 sm1.data[key] = sm2.data[key]
+        # Written straight into the data, which leaves the bounding boxes as they were after the
+        # last frame's rotation, and the rotation below finds its center from them
+        self.mobject.refresh_bounding_box(recurse_down=True)
         self.mobject.rotate(
             self.rate_func(self.time_spanned_alpha(alpha)) * self.angle,
             axis=self.axis,
