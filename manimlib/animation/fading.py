@@ -6,7 +6,7 @@ from manimlib.animation.animation import Animation
 from manimlib.animation.transform import Transform
 from manimlib.constants import ORIGIN
 from manimlib.mobject.types.vectorized_mobject import VMobject
-from manimlib.mobject.mobject import Group
+from manimlib.mobject.mobject import Group, Mobject
 from manimlib.utils.bezier import interpolate
 from manimlib.utils.rate_functions import there_and_back
 
@@ -14,7 +14,6 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from typing import Callable
-    from manimlib.mobject.mobject import Mobject
     from manimlib.scene.scene import Scene
     from manimlib.typing import Vect3
 
@@ -69,7 +68,9 @@ class FadeOut(Fade):
 
 
 class FadeInFromPoint(FadeIn):
-    def __init__(self, mobject: Mobject, point: Vect3, **kwargs):
+    def __init__(self, mobject: Mobject, point: Vect3 | Mobject, **kwargs):
+        if isinstance(point, Mobject):
+            point = point.get_center()
         super().__init__(
             mobject,
             shift=mobject.get_center() - point,
@@ -79,7 +80,9 @@ class FadeInFromPoint(FadeIn):
 
 
 class FadeOutToPoint(FadeOut):
-    def __init__(self, mobject: Mobject, point: Vect3, **kwargs):
+    def __init__(self, mobject: Mobject, point: Vect3 | Mobject, **kwargs):
+        if isinstance(point, Mobject):
+            point = point.get_center()
         super().__init__(
             mobject,
             shift=point - mobject.get_center(),
