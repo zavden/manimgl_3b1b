@@ -45,6 +45,7 @@ git diff fafa083 fixes -- manimlib      # the whole code diff
 | 22 | `Mobject.deepcopy` | A deep copy that is then moved or restyled is drawn where and as it was when copied, with no error | Keep a deep copied StructuredArray's views on its own array |
 | 23 | `Rotate`, `Rotating` | A group whose submobjects an updater reorders (as `sort` toward a light does) drifts off while rotating, ending millions of units away | Refresh bounding boxes after Rotating resets its points |
 | 24 | `Mobject.fade` | `fade()` on a `Group`, an `ImageMobject` or a `DotCloud` returns `None`, so a chained call such as `image.copy().fade(1).shift(...)` raises `AttributeError: 'NoneType' object has no attribute 'shift'` | Return the mobject from Mobject.fade |
+| 25 | `Axes`, `ThreeDAxes`, `NumberPlane` | `TypeError: dict() got multiple values for keyword argument 'unit_size'` when `axis_config` already holds a `unit_size`, as in `Axes(axis_config={"unit_size": 3})` | Let Axes take unit_size inside axis_config |
 
 ## Details
 
@@ -300,6 +301,12 @@ git diff fafa083 fixes -- manimlib      # the whole code diff
 - **File:** `manimlib/mobject/mobject.py` (`Mobject.fade`)
 - **Cause:** `Mobject.fade` is annotated to return `Self` but ended without `return self`. `VMobject.fade` has its own version, which does return it, so a chain such as `image.copy().fade(1).shift(...)` worked on shapes and failed on every other mobject (`Group`, `ImageMobject`, `DotCloud`).
 - **Fix:** return the mobject.
+
+### 25. `Axes` rejected a `unit_size` inside `axis_config`
+
+- **File:** `manimlib/mobject/coordinate_systems.py` (`Axes.__init__`)
+- **Cause:** `Axes.__init__` built its axis settings as `dict(**axis_config, unit_size=unit_size)`, which raises as soon as `axis_config` already has a `unit_size`. Setting the unit of the axes there is how older scene code writes it, and `ThreeDAxes` and `NumberPlane` go through the same line.
+- **Fix:** start from the `unit_size` argument and let `axis_config` override it, as it does with every other setting.
 
 ## Behavior changes in upstream that are not bugs
 

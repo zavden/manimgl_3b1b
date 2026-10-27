@@ -459,7 +459,7 @@ class Axes(VGroup, CoordinateSystem):
         kwargs.pop("num_sampled_graph_points_per_tick", None)
         VGroup.__init__(self, **kwargs)
 
-        axis_config = dict(**axis_config, unit_size=unit_size)
+        axis_config = {"unit_size": unit_size, **axis_config}
         self.x_axis = self.create_axis(
             self.x_range,
             axis_config=merge_dicts_recursively(
