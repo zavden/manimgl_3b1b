@@ -48,6 +48,7 @@ git diff fafa083 fixes -- manimlib      # the whole code diff
 | 25 | `Axes`, `ThreeDAxes`, `NumberPlane` | `TypeError: dict() got multiple values for keyword argument 'unit_size'` when `axis_config` already holds a `unit_size`, as in `Axes(axis_config={"unit_size": 3})` | Let Axes take unit_size inside axis_config |
 | 26 | `DecimalNumber` | `ValueError: Unknown format code 'd' for object of type 'float'` with a complex number and `num_decimal_places=0`, as in `DecimalNumber(complex(2, 1), num_decimal_places=0)` | Format a complex DecimalNumber with no decimals |
 | 27 | `FadeInFromPoint`, `FadeOutToPoint` | `ValueError: operands could not be broadcast together` when the point is a `Mobject`, as in `FadeInFromPoint(group, button)` | Let FadeInFromPoint and FadeOutToPoint take a Mobject as the point |
+| 28 | `Text`, `MarkupText` | `ValueError: Must specify either a file_name or svg_string SVGMobject` for a word that renders fine alone, when several renders (or several processes) write the same text at once: one of them reads a half-written SVG and the disk cache keeps it | Write each markup SVG to a temporary file of its own |
 
 ## Details
 
@@ -321,6 +322,12 @@ git diff fafa083 fixes -- manimlib      # the whole code diff
 - **File:** `manimlib/animation/fading.py`
 - **Cause:** Both subtract the point from the center of the mobject, which only works for a vector. The Cairo versions moved the mobject to `point` with `move_to`, which takes a mobject too, and older scene code passes the mobject it fades from or to.
 - **Fix:** use the center of the point when it is a `Mobject`.
+
+### 28. `Text` and `MarkupText` could cache an empty SVG when two renders wrote the same text at once
+
+- **File:** `manimlib/mobject/svg/text_mobject.py` (`markup_to_svg`)
+- **Cause:** `markup_to_svg` has `manimpango` write the SVG to a temporary file named after a hash of the markup, reads it and deletes it. Two processes drawing the same text at once (renders in parallel, as the scenes of one video often are) used the same file: one read it before the other had finished writing it, or after it had been deleted, and `cache_on_disk` stored that empty string. From then on `Text("coupe")` raised `Must specify either a file_name or svg_string SVGMobject` in every scene, until the entry was cleared from `~/.cache/manim`.
+- **Fix:** write to a temporary file of its own (`tempfile.mkstemp`). A call that already cached an empty SVG still needs `manimlib.utils.cache.clear_cache()` or its entry deleted.
 
 ## Behavior changes in upstream that are not bugs
 

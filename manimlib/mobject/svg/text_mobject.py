@@ -21,7 +21,6 @@ from manimlib.mobject.svg.svg_mobject import get_svg_content_height
 from manimlib.utils.cache import cache_on_disk
 from manimlib.utils.color import color_to_hex
 from manimlib.utils.color import int_to_hex
-from manimlib.utils.simple_functions import hash_string
 
 from typing import TYPE_CHECKING
 
@@ -74,8 +73,11 @@ def markup_to_svg(
     else:
         pango_width = line_width / FRAME_WIDTH * DEFAULT_PIXEL_WIDTH
 
-    # Write the result to a temporary svg file, and return it's contents.
-    temp_file = Path(tempfile.gettempdir(), hash_string(markup_str)).with_suffix(".svg")
+    # Write the result to a temporary svg file of its own (one named after the markup would be
+    # shared by renders running at the same time), and return it's contents.
+    fd, temp_name = tempfile.mkstemp(suffix=".svg")
+    os.close(fd)
+    temp_file = Path(temp_name)
     manimpango.MarkupUtils.text2svg(
         text=markup_str,
         font="",                     # Already handled
