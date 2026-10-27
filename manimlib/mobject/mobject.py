@@ -1442,6 +1442,7 @@ class Mobject(object):
 
     def fade(self, darkness: float = 0.5, recurse: bool = True) -> Self:
         self.set_opacity(1.0 - darkness, recurse=recurse)
+        return self
 
     def get_shading(self) -> np.ndarray:
         return self.uniforms["shading"]

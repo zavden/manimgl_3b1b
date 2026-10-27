@@ -44,6 +44,7 @@ git diff fafa083 fixes -- manimlib      # the whole code diff
 | 21 | `Animation` (`UpdateFromAlphaFunc`, `MoveAlongPath`, `ChangingDecimal`, `ShowIncreasingSubsets`...) | A short animation played alongside a longer one keeps going past its end, e.g. its rate function evaluated at 3 gives 513 | Treat alphas past one as one in Animation.interpolate |
 | 22 | `Mobject.deepcopy` | A deep copy that is then moved or restyled is drawn where and as it was when copied, with no error | Keep a deep copied StructuredArray's views on its own array |
 | 23 | `Rotate`, `Rotating` | A group whose submobjects an updater reorders (as `sort` toward a light does) drifts off while rotating, ending millions of units away | Refresh bounding boxes after Rotating resets its points |
+| 24 | `Mobject.fade` | `fade()` on a `Group`, an `ImageMobject` or a `DotCloud` returns `None`, so a chained call such as `image.copy().fade(1).shift(...)` raises `AttributeError: 'NoneType' object has no attribute 'shift'` | Return the mobject from Mobject.fade |
 
 ## Details
 
@@ -293,6 +294,12 @@ git diff fafa083 fixes -- manimlib      # the whole code diff
   solid in depth order, each frame rotated about a wrongly placed center and the group drifted
   further off every frame, ending millions of units away.
 - **Fix:** refresh the bounding boxes after resetting the points.
+
+### 24. `fade` returned `None` for anything but a `VMobject`
+
+- **File:** `manimlib/mobject/mobject.py` (`Mobject.fade`)
+- **Cause:** `Mobject.fade` is annotated to return `Self` but ended without `return self`. `VMobject.fade` has its own version, which does return it, so a chain such as `image.copy().fade(1).shift(...)` worked on shapes and failed on every other mobject (`Group`, `ImageMobject`, `DotCloud`).
+- **Fix:** return the mobject.
 
 ## Behavior changes in upstream that are not bugs
 
