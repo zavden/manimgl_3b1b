@@ -1,5 +1,6 @@
 from __future__ import annotations
 from functools import lru_cache
+from types import SimpleNamespace
 
 import numpy as np
 
@@ -135,7 +136,12 @@ class DecimalNumber(VMobject):
             formatter = self.get_formatter()
         if self.num_decimal_places == 0 and isinstance(number, float):
             number = int(number)
-        num_string = formatter.format(number)
+        if self.num_decimal_places == 0 and isinstance(number, complex):
+            # "d" cannot format the float parts of a complex, so hand the formatter integer parts
+            parts = SimpleNamespace(real=int(round(number.real)), imag=int(round(number.imag)))
+            num_string = formatter.format(parts)
+        else:
+            num_string = formatter.format(number)
 
         rounded_num = np.round(number, self.num_decimal_places)
         if num_string.startswith("-") and rounded_num == 0:

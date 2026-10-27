@@ -46,6 +46,7 @@ git diff fafa083 fixes -- manimlib      # the whole code diff
 | 23 | `Rotate`, `Rotating` | A group whose submobjects an updater reorders (as `sort` toward a light does) drifts off while rotating, ending millions of units away | Refresh bounding boxes after Rotating resets its points |
 | 24 | `Mobject.fade` | `fade()` on a `Group`, an `ImageMobject` or a `DotCloud` returns `None`, so a chained call such as `image.copy().fade(1).shift(...)` raises `AttributeError: 'NoneType' object has no attribute 'shift'` | Return the mobject from Mobject.fade |
 | 25 | `Axes`, `ThreeDAxes`, `NumberPlane` | `TypeError: dict() got multiple values for keyword argument 'unit_size'` when `axis_config` already holds a `unit_size`, as in `Axes(axis_config={"unit_size": 3})` | Let Axes take unit_size inside axis_config |
+| 26 | `DecimalNumber` | `ValueError: Unknown format code 'd' for object of type 'float'` with a complex number and `num_decimal_places=0`, as in `DecimalNumber(complex(2, 1), num_decimal_places=0)` | Format a complex DecimalNumber with no decimals |
 
 ## Details
 
@@ -307,6 +308,12 @@ git diff fafa083 fixes -- manimlib      # the whole code diff
 - **File:** `manimlib/mobject/coordinate_systems.py` (`Axes.__init__`)
 - **Cause:** `Axes.__init__` built its axis settings as `dict(**axis_config, unit_size=unit_size)`, which raises as soon as `axis_config` already has a `unit_size`. Setting the unit of the axes there is how older scene code writes it, and `ThreeDAxes` and `NumberPlane` go through the same line.
 - **Fix:** start from the `unit_size` argument and let `axis_config` override it, as it does with every other setting.
+
+### 26. A complex `DecimalNumber` with no decimals could not be formatted
+
+- **File:** `manimlib/mobject/numbers.py` (`DecimalNumber.get_num_string`)
+- **Cause:** With no decimals the formatter is `{0.real:d}{0.imag:+d}i`, and the parts of a complex are floats, which `d` cannot format. A real number was already turned into an `int` for this case; a complex one was not.
+- **Fix:** hand the formatter the parts rounded to `int`.
 
 ## Behavior changes in upstream that are not bugs
 
