@@ -6,7 +6,7 @@ This fork is based on [3b1b/manim](https://github.com/3b1b/manim) at commit
 [`FORK_CHANGES.md`](FORK_CHANGES.md) explains each fix (symptom, cause and test); this file lists
 every commit and the full code diff.
 
-## Commits (36)
+## Commits (39)
 
 | # | Commit | Date | Title |
 |---|---|---|---|
@@ -46,12 +46,16 @@ every commit and the full code diff.
 | 34 | `f942b8a8` | 2026-10-26 | Let FadeInFromPoint and FadeOutToPoint take a Mobject as the point |
 | 35 | `56bcfdbd` | 2026-10-26 | Write each markup SVG to a temporary file of its own |
 | 36 | `3e3445d3` | 2026-10-28 | Explain in the README what this fork is for |
+| 37 | `3e182292` | 2026-10-28 | Add DIFF.md with every change against upstream |
+| 38 | `0d061b24` | 2026-10-28 | Update README.md |
+| 39 | `71828ff1` | 2026-10-28 | Use the manimgl_3b1b name and link the companion repositories |
 
 ## Files changed
 
 ```
- FORK_CHANGES.md                              | 383 +++++++++++++++++++++++++++++++++++++++++++++++
- README.md                                    |  48 ++++--
+ DIFF.md                                      | 652 +++++++++++++++++++++++++++++++++++++++++++++++
+ FORK_CHANGES.md                              | 383 ++++++++++++++++++++++++++++
+ README.md                                    |  48 +++-
  manimlib/animation/animation.py              |   4 +-
  manimlib/animation/composition.py            |  11 +-
  manimlib/animation/fading.py                 |  11 +-
@@ -65,14 +69,14 @@ every commit and the full code diff.
  manimlib/mobject/svg/svg_mobject.py          |  10 +-
  manimlib/mobject/svg/text_mobject.py         |   8 +-
  manimlib/mobject/types/dot_cloud.py          |   4 +-
- manimlib/mobject/types/surface.py            |  27 +++-
+ manimlib/mobject/types/surface.py            |  27 +-
  manimlib/mobject/types/vectorized_mobject.py |   3 +-
  manimlib/mobject/vector_field.py             |  11 +-
  manimlib/scene/scene.py                      |   5 +-
  manimlib/shaders/newton_fractal.wgsl         |   4 +-
  manimlib/utils/structured_array.py           |   7 +
  manimlib/utils/tex_file_writing.py           |   8 +-
- 22 files changed, 550 insertions(+), 51 deletions(-)
+ 23 files changed, 1202 insertions(+), 51 deletions(-)
 ```
 
 ## Full diff of `manimlib/`
