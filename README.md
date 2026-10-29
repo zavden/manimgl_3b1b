@@ -38,6 +38,10 @@ Companion repositories:
 | [`assets_3b1b`](https://github.com/zavden/assets_3b1b) | The images, SVGs, sounds and fonts those scenes read, with their licenses |
 | [Rendered videos](https://drive.google.com/drive/folders/1BCGrsZvolya2Jwur21eW9Irj0JhkhujV?usp=sharing) | The scenes rendered at 720p, 15 fps (Google Drive) |
 
+> [!IMPORTANT]
+> **Download the videos one folder at a time, year by year** (`2017/`, `2018/`, …, `outside_videos/`), not the whole `renders_3b1b/` folder at once.
+> If you download everything together, **Google Drive splits it into blocks of 1.3-1.6 GB and mixes the videos of different years inside them.**
+
 The rest of this README is upstream's, with the clone commands pointing to this fork.
 
 Manim is an engine for precise programmatic animations, designed for creating explanatory math videos.
