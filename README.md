@@ -33,7 +33,7 @@ Companion repositories:
 
 | Repository | What it has |
 |---|---|
-| `manimgl_fixed` (this one) | The ManimGL fork with the fixes |
+| `manimgl_3b1b` (this one) | The ManimGL fork with the fixes |
 | [`animations_3b1b`](_pending_) | The scenes of 3b1b/videos (2017-2026) converted to run on this fork, with their web pages |
 | [`assets_3b1b`](_pending_) | The images, SVGs, sounds and fonts those scenes read, with their licenses |
 | [Rendered videos](_pending_) | The scenes rendered at 720p, 15 fps (Google Drive) |
