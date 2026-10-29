@@ -36,7 +36,7 @@ Companion repositories:
 | `manimgl_3b1b` (this one) | The ManimGL fork with the fixes |
 | [`animations_3b1b`](https://github.com/zavden/animations_3b1b) | The scenes of 3b1b/videos (2017-2026) converted to run on this fork, with their web pages |
 | [`assets_3b1b`](https://github.com/zavden/assets_3b1b) | The images, SVGs, sounds and fonts those scenes read, with their licenses |
-| [Rendered videos](_pending_) | The scenes rendered at 720p, 15 fps (Google Drive) |
+| [Rendered videos](https://drive.google.com/drive/folders/1BCGrsZvolya2Jwur21eW9Irj0JhkhujV?usp=sharing) | The scenes rendered at 720p, 15 fps (Google Drive) |
 
 The rest of this README is upstream's, with the clone commands pointing to this fork.
 
