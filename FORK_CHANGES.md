@@ -2,7 +2,7 @@
 
 This is a fork of [3b1b/manim](https://github.com/3b1b/manim) (ManimGL 1.7.2). It is based on
 upstream commit [`fafa083`](https://github.com/3b1b/manim/commit/fafa083a4fb274bba9cabde0b6e2f50ba6da0622)
-("Add VideoMobject and Sprite (#2521)", 2026-09-09), and the `fixes` branch adds **bug fixes
+("Add VideoMobject and Sprite (#2521)", 2026-09-09), and the `main` branch adds **bug fixes
 only**: no new features and no API changes. Scenes written for upstream ManimGL run the same
 way here.
 
@@ -13,8 +13,8 @@ names each commit by its title, which `git log` shows next to its hash.
 To see every change against upstream:
 
 ```bash
-git log --reverse fafa083..fixes        # one commit per fix
-git diff fafa083 fixes -- manimlib      # the whole code diff
+git log --reverse fafa083..main         # one commit per fix
+git diff fafa083 main -- manimlib      # the whole code diff
 ```
 
 ## Summary

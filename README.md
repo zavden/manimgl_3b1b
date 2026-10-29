@@ -10,9 +10,35 @@
 [![Manim Discord](https://img.shields.io/discord/581738731934056449.svg?label=discord&logo=discord)](https://discord.com/invite/bYCyhM9Kz2)
 [![docs](https://github.com/3b1b/manim/workflows/docs/badge.svg)](https://3b1b.github.io/manim/)
 
-> [!Note]
-> **This is a fork** of [3b1b/manim](https://github.com/3b1b/manim) at commit `fafa083` (2026-09-09) with bug fixes only.
-> See [FORK_CHANGES.md](FORK_CHANGES.md) for the list of changes.
+> [!Important]
+> **This is an unofficial fork of [3b1b/manim](https://github.com/3b1b/manim), not the original project.**
+> It is not affiliated with 3Blue1Brown nor endorsed by them, and it is not meant to replace upstream.
+
+## About this fork
+
+This repository exists for one purpose: to run the public [3b1b/videos](https://github.com/3b1b/videos) code on a
+recent ManimGL (1.7.2) without it breaking. The scenes were converted and rendered in
+[`animations_3b1b`](_pending_) and needed a handful of engine bug fixes that upstream does not have.
+
+- **Base:** upstream commit [`fafa083`](https://github.com/3b1b/manim/commit/fafa083a4fb274bba9cabde0b6e2f50ba6da0622)
+  ("Add VideoMobject and Sprite (#2521)", 2026-09-09). The full upstream history is kept.
+- **What it adds:** bug fixes only. No new features, no API changes: a scene written for upstream ManimGL runs the same way here.
+- **What every fix is:** [`FORK_CHANGES.md`](FORK_CHANGES.md) gives the symptom, cause and test of each one, and
+  [`DIFF.md`](DIFF.md) lists every commit and the full code diff against upstream.
+- **Not kept up to date:** this fork does not follow upstream. If you do not need these fixes, install the
+  original (`pip install manimgl` from PyPI, [3b1b/manim](https://github.com/3b1b/manim)). Anything that is not a fix belongs upstream.
+- **Package name:** it is still `manimgl` (module `manimlib`), so installing it replaces the PyPI one.
+
+Companion repositories:
+
+| Repository | What it has |
+|---|---|
+| `manimgl_fixed` (this one) | The ManimGL fork with the fixes |
+| [`animations_3b1b`](_pending_) | The scenes of 3b1b/videos (2017-2026) converted to run on this fork, with their web pages |
+| [`assets_3b1b`](_pending_) | The images, SVGs, sounds and fonts those scenes read, with their licenses |
+| [Rendered videos](_pending_) | The scenes rendered at 720p, 15 fps (Google Drive) |
+
+The rest of this README is upstream's, with the clone commands pointing to this fork.
 
 Manim is an engine for precise programmatic animations, designed for creating explanatory math videos.
 
@@ -23,7 +49,7 @@ Note, there are two versions of manim.  This repository began as a personal proj
 > **WARNING:** These instructions are for ManimGL _only_. Trying to use these instructions to install [Manim Community/manim](https://github.com/ManimCommunity/manim) or instructions there to install this version will cause problems. You should first decide which version you wish to install, then only follow the instructions for your desired version.
 
 > [!Note]
-> **Note**: To install manim directly through pip, please pay attention to the name of the installed package. This repository is ManimGL of 3b1b. The package name is `manimgl` instead of `manim` or `manimlib`. Please use `pip install manimgl` to install the version in this repository.
+> **Note**: To install manim directly through pip, please pay attention to the name of the installed package. This repository is ManimGL of 3b1b. The package name is `manimgl` instead of `manim` or `manimlib`. `pip install manimgl` installs the **upstream** release from PyPI, not this fork: to install the fork, use `pip install git+https://github.com/zavden/manimgl_fixed.git` or clone this repository and run `pip install -e .`.
 
 Manim runs on Python 3.10 or higher.
 
@@ -34,8 +60,8 @@ For Linux, [Pango](https://pango.org) along with its development headers are req
 ### Directly
 
 ```sh
-# Install manimgl
-pip install manimgl
+# Install the fork (pip install manimgl would install upstream instead)
+pip install git+https://github.com/zavden/manimgl_fixed.git
 
 # Try it out
 manimgl
@@ -79,8 +105,8 @@ while still supporting most Manim projects.
 3. Clone and install ManimGL.
 
 ```sh
-git clone https://github.com/3b1b/manim.git
-cd manim
+git clone https://github.com/zavden/manimgl_fixed.git
+cd manimgl_fixed
 
 python3 -m pip install -e .
 
@@ -115,8 +141,8 @@ sudo apt install python3.12-venv
 2. Install a LaTeX distribution. [MiKTeX](https://miktex.org/download) is recommended.
 3. Install the remaining Python packages.
     ```sh
-    git clone https://github.com/3b1b/manim.git
-    cd manim
+    git clone https://github.com/zavden/manimgl_fixed.git
+    cd manimgl_fixed
     pip install -e .
     manimgl example_scenes.py OpeningManimExample
     ```
@@ -144,8 +170,8 @@ sudo apt install python3.12-venv
    
 3. Install latest version of manim using these command.
     ```sh
-    git clone https://github.com/3b1b/manim.git
-    cd manim
+    git clone https://github.com/zavden/manimgl_fixed.git
+    cd manimgl_fixed
     pip install -e .
     manimgl example_scenes.py OpeningManimExample
     ```
