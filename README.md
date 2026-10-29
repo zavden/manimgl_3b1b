@@ -18,7 +18,7 @@
 
 This repository exists for one purpose: to run the public [3b1b/videos](https://github.com/3b1b/videos) code on a
 recent ManimGL (1.7.2) without it breaking. The scenes were converted and rendered in
-[`animations_3b1b`](_pending_) and needed a handful of engine bug fixes that upstream does not have.
+[`animations_3b1b`](https://github.com/zavden/animations_3b1b) and needed a handful of engine bug fixes that upstream does not have.
 
 - **Base:** upstream commit [`fafa083`](https://github.com/3b1b/manim/commit/fafa083a4fb274bba9cabde0b6e2f50ba6da0622)
   ("Add VideoMobject and Sprite (#2521)", 2026-09-09). The full upstream history is kept.
@@ -34,8 +34,8 @@ Companion repositories:
 | Repository | What it has |
 |---|---|
 | `manimgl_3b1b` (this one) | The ManimGL fork with the fixes |
-| [`animations_3b1b`](_pending_) | The scenes of 3b1b/videos (2017-2026) converted to run on this fork, with their web pages |
-| [`assets_3b1b`](_pending_) | The images, SVGs, sounds and fonts those scenes read, with their licenses |
+| [`animations_3b1b`](https://github.com/zavden/animations_3b1b) | The scenes of 3b1b/videos (2017-2026) converted to run on this fork, with their web pages |
+| [`assets_3b1b`](https://github.com/zavden/assets_3b1b) | The images, SVGs, sounds and fonts those scenes read, with their licenses |
 | [Rendered videos](_pending_) | The scenes rendered at 720p, 15 fps (Google Drive) |
 
 The rest of this README is upstream's, with the clone commands pointing to this fork.
@@ -49,7 +49,7 @@ Note, there are two versions of manim.  This repository began as a personal proj
 > **WARNING:** These instructions are for ManimGL _only_. Trying to use these instructions to install [Manim Community/manim](https://github.com/ManimCommunity/manim) or instructions there to install this version will cause problems. You should first decide which version you wish to install, then only follow the instructions for your desired version.
 
 > [!Note]
-> **Note**: To install manim directly through pip, please pay attention to the name of the installed package. This repository is ManimGL of 3b1b. The package name is `manimgl` instead of `manim` or `manimlib`. `pip install manimgl` installs the **upstream** release from PyPI, not this fork: to install the fork, use `pip install git+https://github.com/zavden/manimgl_fixed.git` or clone this repository and run `pip install -e .`.
+> **Note**: To install manim directly through pip, please pay attention to the name of the installed package. This repository is ManimGL of 3b1b. The package name is `manimgl` instead of `manim` or `manimlib`. `pip install manimgl` installs the **upstream** release from PyPI, not this fork: to install the fork, use `pip install git+https://github.com/zavden/manimgl_3b1b.git` or clone this repository and run `pip install -e .`.
 
 Manim runs on Python 3.10 or higher.
 
@@ -61,7 +61,7 @@ For Linux, [Pango](https://pango.org) along with its development headers are req
 
 ```sh
 # Install the fork (pip install manimgl would install upstream instead)
-pip install git+https://github.com/zavden/manimgl_fixed.git
+pip install git+https://github.com/zavden/manimgl_3b1b.git
 
 # Try it out
 manimgl
@@ -105,8 +105,8 @@ while still supporting most Manim projects.
 3. Clone and install ManimGL.
 
 ```sh
-git clone https://github.com/zavden/manimgl_fixed.git
-cd manimgl_fixed
+git clone https://github.com/zavden/manimgl_3b1b.git
+cd manimgl_3b1b
 
 python3 -m pip install -e .
 
@@ -141,8 +141,8 @@ sudo apt install python3.12-venv
 2. Install a LaTeX distribution. [MiKTeX](https://miktex.org/download) is recommended.
 3. Install the remaining Python packages.
     ```sh
-    git clone https://github.com/zavden/manimgl_fixed.git
-    cd manimgl_fixed
+    git clone https://github.com/zavden/manimgl_3b1b.git
+    cd manimgl_3b1b
     pip install -e .
     manimgl example_scenes.py OpeningManimExample
     ```
@@ -170,8 +170,8 @@ sudo apt install python3.12-venv
    
 3. Install latest version of manim using these command.
     ```sh
-    git clone https://github.com/zavden/manimgl_fixed.git
-    cd manimgl_fixed
+    git clone https://github.com/zavden/manimgl_3b1b.git
+    cd manimgl_3b1b
     pip install -e .
     manimgl example_scenes.py OpeningManimExample
     ```
